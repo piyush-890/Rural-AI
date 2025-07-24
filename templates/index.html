@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AgriHealth AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="header">
+    <div class="logo">🌱 <span>Rural Health AI</span></div>
+    <div class="language">
+      <select>
+        <option>English</option>
+        <option>Hindi</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="chat-container">
+    <div class="chat-box" id="chat-box">
+      <h2>Rural Health AI Assistant</h2>
+      <div class="message bot-message">
+        🤖 Welcome to Rural Health AI. How can I help you today?
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" id="user-input" placeholder="Describe your symptoms..." />
+      <button type="button" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById('user-input');
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chatBox = document.getElementById('chat-box');
+      const userDiv = document.createElement('div');
+      userDiv.className = 'message user-message';
+      userDiv.textContent = message;
+      chatBox.appendChild(userDiv);
+
+      const response = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message })
+      });
+
+      const data = await response.json();
+
+      const botDiv = document.createElement('div');
+      botDiv.className = 'message bot-message';
+      botDiv.textContent = "🤖 " + data.response;
+      chatBox.appendChild(botDiv);
+
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
